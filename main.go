@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"slices"
+)
 
 func main() {
 	fmt.Println("------ 交替合并字符串(字符串,双指针) ------")
@@ -10,6 +13,18 @@ func main() {
 	fmt.Println("------ 字符串的最大公因子(字符串,数学) ------")
 	str1, str2 := "ABABAB", "AB"
 	fmt.Println("gcdOfStrings:", gcdOfStrings(str1, str2)) // AB
+
+	fmt.Println("------ 拥有最多糖果的孩子(数组) ------")
+	candies := []int{2, 3, 5, 1, 3}
+	extraCandies := 3
+	fmt.Println("kidsWithCandies:", kidsWithCandies(candies, extraCandies)) // [true, true, true, false, true]
+
+	fmt.Println("------ 种花问题(数组,贪心) ------")
+	// flowerbed := []int{1, 0, 0, 0, 0, 1}
+	flowerbed := []int{1, 0, 0, 0, 1, 0, 0}
+	// flowerbed := []int{0, 1, 0}
+	n := 3
+	fmt.Println("can_place_flowers:", canPlaceFlowers(flowerbed, n)) // false
 
 }
 
@@ -52,4 +67,27 @@ func gcdOfStrings(str1 string, str2 string) string {
 	}
 
 	return str1[0:getGCD(len(str1), len(str2))]
+}
+
+func kidsWithCandies(candies []int, extraCandies int) []bool {
+	mc := slices.Max(candies) - extraCandies
+	result := make([]bool, len(candies))
+	for i, c := range candies {
+		result[i] = c >= mc
+	}
+
+	return result
+}
+
+func canPlaceFlowers(flowerbed []int, n int) bool {
+	fl := len(flowerbed)
+	for i := 0; i < fl; i++ {
+		// 检查头尾&相邻项的问题
+		if flowerbed[i] == 0 && (i == 0 || flowerbed[i-1] == 0) && (i == fl-1 || flowerbed[i+1] == 0) {
+			n--
+			i++ // 肯定不能种花,跳过一个位置
+		}
+	}
+
+	return n <= 0
 }
