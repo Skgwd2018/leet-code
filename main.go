@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"leet-code/lib"
 	"slices"
 )
 
@@ -52,6 +53,26 @@ func main() {
 	fmt.Println("------ 寻找数组的中心下标(数组,前缀和) ------")
 	nums = []int{1, 7, 3, 6, 5, 6}
 	fmt.Println("pivotIndex:", pivotIndex(nums)) // 3
+
+	fmt.Println("------ 找出两数组的不同(数组,哈希表) ------")
+	nums1 := []int{1, 2, 3, 3}
+	nums2 := []int{1, 2, 1, 2, 4}
+	fmt.Println("findDifference:", findDifference(nums1, nums2)) // [[3], [4]]
+
+	fmt.Println("------ 独一无二的出现次数(数组,哈希表) ------")
+	arr := []int{1, 2, 2, 1, 1, 3}
+	fmt.Println("unique_occurrences:", uniqueOccurrences(arr)) // true
+
+	fmt.Println("------ 最近的请求次数(头尾高效操作的队列,数据流) ------")
+	recentCounter := lib.Constructor()
+	ret1 := recentCounter.Ping(1)
+	fmt.Println("ping:", ret1) // 1
+	ret2 := recentCounter.Ping(100)
+	fmt.Println("ping:", ret2) // 2
+	ret3 := recentCounter.Ping(3001)
+	fmt.Println("ping:", ret3) // 3
+	ret4 := recentCounter.Ping(3002)
+	fmt.Println("ping:", ret4) // 3
 
 }
 
@@ -223,4 +244,50 @@ func pivotIndex(nums []int) int {
 	}
 
 	return -1
+}
+
+func findDifference(nums1 []int, nums2 []int) [][]int {
+	//set1, set2 := map[int]bool{}, map[int]bool{}
+	set1, set2 := make(map[int]bool, len(nums1)), make(map[int]bool, len(nums2))
+	for _, v := range nums1 {
+		set1[v] = true
+	}
+	for _, v := range nums2 {
+		set2[v] = true
+	}
+
+	//var a1, a2 []int
+	result := make([][]int, 2)
+	for k := range set1 {
+		if !set2[k] {
+			result[0] = append(result[0], k)
+		}
+	}
+	for k := range set2 {
+		if !set1[k] {
+			result[1] = append(result[1], k)
+		}
+	}
+
+	//return [][]int{a1, a2}
+	return result
+}
+
+func uniqueOccurrences(arr []int) bool {
+	// 记录每个数的出现次数
+	cntMap := make(map[int]int)
+	for _, v := range arr {
+		cntMap[v]++
+	}
+
+	// 验证是否有重复出现次数
+	occMap := make(map[int]struct{})
+	for _, v := range cntMap {
+		if _, ok := occMap[v]; ok {
+			return false
+		}
+		occMap[v] = struct{}{}
+	}
+
+	return true
 }
