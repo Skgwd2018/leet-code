@@ -24,7 +24,34 @@ func main() {
 	flowerbed := []int{1, 0, 0, 0, 1, 0, 0}
 	// flowerbed := []int{0, 1, 0}
 	n := 3
-	fmt.Println("can_place_flowers:", canPlaceFlowers(flowerbed, n)) // false
+	fmt.Println("canPlaceFlowers:", canPlaceFlowers(flowerbed, n)) // false
+
+	fmt.Println("------ 反转字符串中的元音字母(字符串,双指针) ------")
+	s := "leetcode"
+	// s := "hello"
+	fmt.Println("reverseVowels:", reverseVowels(s)) // leotcede
+
+	fmt.Println("------ 移动零(数组,双指针) ------")
+	nums := []int{0, 1, 0, 3, 12}
+	// nums := []int{4, 1, 5, 3, 12}
+	moveZeroes(nums) // [1, 3, 12, 0, 0]
+
+	fmt.Println("------ 判断子序列(字符串,双指针,动态规划) ------")
+	s, t := "ace", "abcde"
+	fmt.Printf("Is %s a sub of %s? %t \n", s, t, isSubsequence(s, t)) // true
+
+	fmt.Println("------ 子数组最大平均数(数组,滑动窗口) ------")
+	nums = []int{1, 12, -5, -6, 50, 3}
+	fmt.Println("findMaxAverage:", findMaxAverage(nums, 4)) // 12.75
+
+	fmt.Println("------ 找到最高海拔(数组,前缀和) ------")
+	gain := []int{-5, 1, 5, 0, -7}
+	// gain := []int{-4, -3, -2, -1, 4, 3, 2}
+	fmt.Println("largestAltitude:", largestAltitude(gain)) // 1
+
+	fmt.Println("------ 寻找数组的中心下标(数组,前缀和) ------")
+	nums = []int{1, 7, 3, 6, 5, 6}
+	fmt.Println("pivotIndex:", pivotIndex(nums)) // 3
 
 }
 
@@ -70,6 +97,7 @@ func gcdOfStrings(str1 string, str2 string) string {
 }
 
 func kidsWithCandies(candies []int, extraCandies int) []bool {
+	// slice中取最大值
 	mc := slices.Max(candies) - extraCandies
 	result := make([]bool, len(candies))
 	for i, c := range candies {
@@ -90,4 +118,109 @@ func canPlaceFlowers(flowerbed []int, n int) bool {
 	}
 
 	return n <= 0
+}
+
+// 是否是元音字母
+func isVowel(s byte) bool {
+	if s == 'a' || s == 'e' || s == 'i' || s == 'o' || s == 'u' || s == 'A' || s == 'E' || s == 'I' || s == 'O' || s == 'U' {
+		return true
+	}
+	return false
+}
+
+func reverseVowels(s string) string {
+	b := []byte(s)
+	for i, j := 0, len(b)-1; i < j; {
+		if !isVowel(b[i]) {
+			i++
+			continue
+		}
+		if !isVowel(b[j]) {
+			j--
+			continue
+		}
+
+		b[i], b[j] = b[j], b[i]
+		i++
+		j--
+	}
+
+	return string(b)
+}
+
+func moveZeroes(nums []int) {
+	// 双指针操作
+	for i, j := 0, 0; i < len(nums); i++ {
+		if nums[i] != 0 {
+			//nums[i], nums[j] = nums[j], nums[i]
+			nums[j] = nums[i]
+			if i != j {
+				nums[i] = 0
+			}
+
+			j++
+		}
+	}
+
+	fmt.Println(nums)
+}
+
+func isSubsequence(s string, t string) bool {
+	//sb, tb := []byte(s), []byte(t) // 性能没区别
+	sl, tl := len(s), len(t)
+	si, ti := 0, 0
+	for ti < tl {
+		if si < sl && s[si] == t[ti] {
+			si++
+		}
+		ti++
+	}
+
+	return si == sl
+}
+
+func findMaxAverage(nums []int, k int) float64 {
+	if len(nums) == 1 {
+		return float64(nums[0])
+	}
+
+	wSum := 0
+	for _, v := range nums[:k] {
+		wSum += v
+	}
+	maxSum := wSum
+	for i := k; i < len(nums); i++ {
+		wSum += nums[i] - nums[i-k]
+		// 比较取最大值
+		maxSum = max(maxSum, wSum)
+	}
+
+	return float64(maxSum) / float64(k)
+}
+
+func largestAltitude(gain []int) int {
+	highest, cSum := 0, 0
+	for _, g := range gain {
+		cSum += g
+		highest = max(highest, cSum)
+	}
+
+	return highest
+}
+
+func pivotIndex(nums []int) int {
+	sum := 0
+	for _, v := range nums {
+		sum += v
+	}
+
+	for i, v := range nums {
+		sum -= v
+		if sum == 0 {
+			return i
+		}
+		sum -= v
+	}
+
+	return -1
 }
