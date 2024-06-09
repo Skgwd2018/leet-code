@@ -79,6 +79,13 @@ func main() {
 	fmt.Println("------ 叶子相似的树(二叉树,dfs) ------")
 	fmt.Println("------ 二叉搜索树(BST)中的搜索(二叉搜索树,迭代) ------")
 
+	fmt.Println("------ 猜数字大小(二分查找) ------")
+	fmt.Println("guessNumber:", guessNumber(10)) // 7
+
+	fmt.Println("------ 第N个泰波那契数(动态规划) ------")
+	n = 25
+	fmt.Printf("tribonacci(%d): %d", n, tribonacci(n)) // 1389537
+
 }
 
 // 交替合并字符串
@@ -295,4 +302,52 @@ func uniqueOccurrences(arr []int) bool {
 	}
 
 	return true
+}
+
+func guess(num int) int {
+	switch {
+	case num < 7:
+		return 1
+	case num > 7:
+		return -1
+	default:
+		return 0
+	}
+}
+func guessNumber(n int) int {
+	// 二分法
+	for low := 1; low < n; {
+		mid := low + (n-low)/2
+		if guess(mid) == 1 {
+			low = mid + 1
+		} else {
+			n = mid
+		}
+	}
+	return n
+
+	// 解法二:闭包操作
+	/*result := 1 + sort.Search(n, func(i int) bool {
+		return guess(i+1) != 1
+	})
+	return result*/
+}
+
+// 使用动态规划避免重复计算
+// 泰波那契序列 Tn 定义如下：
+// T0 = 0, T1 = 1, T2 = 1, 且在 n >= 0 的条件下 Tn+3 = Tn + Tn+1 + Tn+2
+// 给你整数 n，请返回第 n 个泰波那契数 Tn 的值。
+func tribonacci(n int) int {
+	if n == 0 {
+		return 0
+	}
+	if n <= 2 {
+		return 1
+	}
+
+	p1, p2, p3 := 0, 1, 1
+	for i := 2; i < n; i++ {
+		p1, p2, p3 = p2, p3, p1+p2+p3
+	}
+	return p3
 }
