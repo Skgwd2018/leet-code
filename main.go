@@ -74,6 +74,11 @@ func main() {
 	ret4 := recentCounter.Ping(3002)
 	fmt.Println("ping:", ret4) // 3
 
+	fmt.Println("------ 反转链表(递归,链表) ------")
+	fmt.Println("------ 二叉树的最大深度(递归) ------")
+	fmt.Println("------ 叶子相似的树(二叉树,dfs) ------")
+	fmt.Println("------ 二叉搜索树(BST)中的搜索(二叉搜索树,迭代) ------")
+
 }
 
 // 交替合并字符串
