@@ -107,6 +107,17 @@ func main() {
 	s = "  a good   example "
 	fmt.Println("reverse_words:", reverseWords(s)) // example good a
 
+	fmt.Println("------ 压缩字符串(字符串,双指针) ------")
+	chars := []byte{'a', 'a', 'b', 'b', 'c', 'c', 'c'}
+	// chars := []byte{'a'}
+	// chars := []byte{'a', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b'}
+	fmt.Println("compress:", compress(chars)) // 6  ['a', '2', 'b', '2', 'c', '3']
+
+	fmt.Println("------ 盛最多水的容器(数组,双指针,贪心) ------")
+	height := []int{1, 8, 6, 2, 5, 4, 8, 3, 7}
+	// height := []int{1, 1}
+	fmt.Println("maxArea:", maxArea(height)) // 49
+
 }
 
 // 交替合并字符串
@@ -438,4 +449,78 @@ func reverseWords(s string) string {
 	// 重新使用空格连接单词
 	result := strings.Join(words, " ")
 	return result
+}
+
+func compress(chars []byte) int {
+	n := len(chars)
+	if n <= 1 {
+		return n
+	}
+
+	// 解法一:
+	/*idx, count := 0, 1
+	for i := 1; i < n; i++ {
+		if chars[i-1] == chars[i] {
+			count++
+		} else {
+			chars[idx] = chars[i-1]
+			idx++
+			if count > 1 {
+				for _, c := range strconv.Itoa(count) {
+					chars[idx] = byte(c)
+					idx++
+				}
+			}
+			count = 1
+		}
+	}
+
+	chars[idx] = chars[n-1]
+	idx++
+	if count > 1 {
+		for _, c := range strconv.Itoa(count) {
+			chars[idx] = byte(c)
+			idx++
+		}
+	}
+	return idx*/
+
+	// 解法二:
+	write, left := 0, 0
+	for read, ch := range chars {
+		if read == n-1 || ch != chars[read+1] {
+			chars[write] = ch
+			write++
+			num := read - left + 1
+			if num > 1 {
+				anchor := write
+				for ; num > 0; num /= 10 {
+					chars[write] = '0' + byte(num%10)
+					write++
+				}
+				s := chars[anchor:write]
+				for i, n := 0, len(s); i < n/2; i++ {
+					s[i], s[n-1-i] = s[n-1-i], s[i]
+				}
+			}
+			left = read + 1
+		}
+	}
+	return write
+}
+
+func maxArea(height []int) int {
+	left, right := 0, len(height)-1
+	mArea, currArea := 0, 0
+	for left < right {
+		currArea = min(height[left], height[right]) * (right - left)
+		mArea = max(mArea, currArea)
+		if height[left] < height[right] {
+			left++
+		} else {
+			right--
+		}
+	}
+
+	return mArea
 }
