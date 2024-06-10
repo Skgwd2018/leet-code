@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"leet-code/lib"
+	"math/bits"
 	"slices"
+	"strings"
 )
 
 func main() {
@@ -84,7 +86,26 @@ func main() {
 
 	fmt.Println("------ 第N个泰波那契数(动态规划) ------")
 	n = 25
-	fmt.Printf("tribonacci(%d): %d", n, tribonacci(n)) // 1389537
+	fmt.Printf("tribonacci(%d): %d \n", n, tribonacci(n)) // 1389537
+
+	fmt.Println("------ 使用最小花费爬楼梯(数组,动态规划) ------")
+	// let cost = vec![10, 15, 20]; // 15
+	cost := []int{1, 100, 1, 1, 1, 100, 1, 1, 100, 1}                  // 6
+	fmt.Println("minCostClimbingStairs:", minCostClimbingStairs(cost)) // 6
+
+	fmt.Println("------ 比特位计数(位运算,动态规划) ------")
+	n = 5
+	fmt.Printf("countBits(%d): %d \n", n, countBits(n)) // [0, 1, 1, 2, 1, 2]
+
+	fmt.Println("------ 只出现一次的数字(位运算,数组) ------")
+	nums = []int{4, 1, 2, 1, 2}
+	fmt.Println("singleNumber:", singleNumber(nums)) // 4
+
+	fmt.Println("\n-------------up---------------\n")
+
+	fmt.Println("------ 反转字符串中的单词(字符串,双指针) ------")
+	s = "  a good   example "
+	fmt.Println("reverse_words:", reverseWords(s)) // example good a
 
 }
 
@@ -350,4 +371,71 @@ func tribonacci(n int) int {
 		p1, p2, p3 = p2, p3, p1+p2+p3
 	}
 	return p3
+}
+
+func minCostClimbingStairs(cost []int) int {
+	c1, c2 := cost[0], cost[1]
+	for i := 2; i < len(cost); i++ {
+		c1, c2 = c2, min(c1, c2)+cost[i]
+	}
+	return min(c1, c2)
+
+	// 解法二:
+	/*dp := make([]int, len(cost)+1)
+	for i := 2; i < len(dp); i++ {
+		dp[i] = min(dp[i-1]+cost[i-1], dp[i-2]+cost[i-2])
+	}
+	return dp[len(cost)]*/
+}
+
+// 位运算
+// 输入：n = 5
+// 输出：[0,1,1,2,1,2]
+// 解释：
+// 0 --> 0
+// 1 --> 1
+// 2 --> 10
+// 3 --> 11
+// 4 --> 100
+// 5 --> 101
+func countBits(n int) []int {
+	// 动态规划 + Brian Kernighan 算法
+	/*dp := make([]int, n+1)
+	for i := 1; i <= n; i++ {
+		// 比特位计数:根据动态规划可以得知二进制数之间的转换关系。
+		// 使用布赖恩·克尼根算法求出关系式:清除n的最右一位1的值即 clr_left_1bit = num&(num - 1)
+		dp[i] = dp[i&(i-1)] + 1
+	}
+	return dp*/
+
+	//解法二:使用内置函数
+	result := make([]int, n+1)
+	for i := 0; i <= n; i++ {
+		result[i] = bits.OnesCount(uint(i))
+	}
+	return result
+}
+
+// 题目：给你一个 非空 整数数组 nums,除了某个元素只出现一次以外,其余每个元素均出现两次。找出那个只出现了一次的元素。
+// 假设数组中重复的元素为x,只出现一次的元素为y。
+// 将数组中的所有元素进行异或运算,由于x出现了两次,所以x和x异或的结果为0,而y只出现了一次,所以最后的结果就是y。
+// 异或（XOR）运算问题。异或运算有一个重要的性质:任何数和0异或都等于它本身,任何数和其自身异或都等于0。
+func singleNumber(nums []int) int {
+	single := 0
+	for _, v := range nums {
+		single ^= v
+	}
+	return single
+}
+
+func reverseWords(s string) string {
+	// 切割单个/多个空格,提取出单词slice
+	words := strings.Fields(s)
+	// 反转即对换位置
+	for i := 0; i < len(words)/2; i++ {
+		words[i], words[len(words)-1-i] = words[len(words)-1-i], words[i]
+	}
+	// 重新使用空格连接单词
+	result := strings.Join(words, " ")
+	return result
 }
