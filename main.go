@@ -118,6 +118,21 @@ func main() {
 	// height := []int{1, 1}
 	fmt.Println("maxArea:", maxArea(height)) // 49
 
+	fmt.Println("------ 从字符串中移除星号(栈,字符串) ------")
+	s = "leet**cod*e" // lecoe
+	// s = "erase*****" // ""
+	fmt.Println("removeStars:", removeStars(s))
+
+	fmt.Println("------ 字符串解码(栈,字符串) ------")
+	s = "3[a12[c]]" // accccccccccccaccccccccccccacccccccccccc
+	// s = "3[a]2[bc]" // aaabcbc
+	fmt.Println("decodeString:", decodeString(s)) // accccccccccccaccccccccccccacccccccccccc
+
+	fmt.Println("----- 数组中的第k个最大元素(数组,分治,快速选择) ------")
+	nums = []int{3, 2, 1, 5, 6, 4}
+	// nums = []int{3, 2, 3, 1, 2, 4, 5, 5, 6}
+	fmt.Println("findKthLargest:", findKthLargest(nums, 2)) // 5
+
 }
 
 // 交替合并字符串
@@ -523,4 +538,92 @@ func maxArea(height []int) int {
 	}
 
 	return mArea
+}
+
+func removeStars(s string) string {
+	/*var stack []byte
+	for _, b := range []byte(s) {
+		if b == '*' {
+			stack = stack[:len(stack)-1]
+		} else {
+			stack = append(stack, b)
+		}
+	}
+	return string(stack)*/
+
+	// 解法二:
+	stack := make([]byte, len(s))
+	su := 0
+	for i := 0; i < len(s); i++ {
+		if s[i] != '*' {
+			stack[su] = s[i]
+			su++
+		} else {
+			su--
+		}
+	}
+	return string(stack[:su])
+}
+
+func isNumber(u uint8) bool {
+	return u >= '0' && u <= '9'
+}
+
+// 题目要求:原始数据不包含数字,所有的数字只表示重复的次数 k,例:不会出现像 3a 或 2[4] 的输入, s 中所有整数的取值范围为 [1, 300]
+func decodeString(s string) string {
+	currNum, numStack := 0, make([]int, 0)
+	currStr, strStack := "", make([]string, 0)
+	for i := 0; i < len(s); i++ {
+		if isNumber(s[i]) {
+			currNum = currNum*10 + int(s[i]-'0')
+		} else if s[i] == '[' {
+			numStack = append(numStack, currNum)
+			strStack = append(strStack, currStr)
+			currNum, currStr = 0, ""
+		} else if s[i] == ']' {
+			item := ""
+			for j := 0; j < numStack[len(numStack)-1]; j++ {
+				item += currStr
+			}
+			currStr = strStack[len(strStack)-1] + item
+
+			numStack = numStack[:len(numStack)-1]
+			strStack = strStack[:len(strStack)-1]
+		} else {
+			currStr += string(s[i])
+		}
+	}
+
+	return currStr
+}
+
+// 快速选择
+func quickSelect(nums []int, left, right, k int) int {
+	if left == right {
+		return nums[k]
+	}
+
+	partition := nums[left]
+	i := left - 1
+	j := right + 1
+	for i < j {
+		for i++; nums[i] < partition; i++ {
+		}
+		for j--; nums[j] > partition; j-- {
+		}
+		if i < j {
+			nums[i], nums[j] = nums[j], nums[i]
+		}
+	}
+
+	if k <= j {
+		return quickSelect(nums, left, j, k)
+	} else {
+		return quickSelect(nums, j+1, right, k)
+	}
+}
+
+func findKthLargest(nums []int, k int) int {
+	n := len(nums)
+	return quickSelect(nums, 0, n-1, n-k)
 }
