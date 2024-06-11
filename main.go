@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"leet-code/lib"
+	"math"
 	"math/bits"
 	"slices"
 	"sort"
@@ -143,6 +144,13 @@ func main() {
 	piles := []int{30, 11, 23, 4, 20}
 	h := 6
 	fmt.Println("minEatingSpeed:", minEatingSpeed(piles, h))
+
+	fmt.Println("----- 递增的三元子序列(贪心算法) ------")
+	// 判断数组nums中是否存在长度为 3 的递增子序列。
+	// 如果存在这样的三元组下标 (i, j, k) 且满足 i < j < k,使得 nums[i] < nums[j] < nums[k],返回 true;否则,返回 false
+	// 三元组 (3, 4, 5) 满足题意，因为 nums[3] == 0 < nums[4] == 4 < nums[5] == 6,返回true
+	nums = []int{2, 1, 5, 0, 4, 6}
+	fmt.Println("increasing_triplet:", increasingTriplet(nums)) // true
 
 }
 
@@ -648,4 +656,23 @@ func minEatingSpeed(piles []int, h int) int {
 		}
 		return sum <= h
 	})
+}
+
+func increasingTriplet(nums []int) bool {
+	if len(nums) < 3 {
+		return false
+	}
+
+	first, second := math.MaxInt32, math.MaxInt32
+	for _, num := range nums {
+		if num <= first {
+			first = num
+		} else if num <= second {
+			second = num
+		} else {
+			return true
+		}
+	}
+
+	return false
 }
