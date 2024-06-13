@@ -152,6 +152,15 @@ func main() {
 	nums = []int{2, 1, 5, 0, 4, 6}
 	fmt.Println("increasing_triplet:", increasingTriplet(nums)) // true
 
+	fmt.Println("----- 452. 用最少数量的箭引爆气球(贪心,数组,排序) ------")
+	// 有许多球形气球贴在一堵用 XY 平面表示的墙面上。
+	// 墙面上的气球记录在整数数组 points ，其中points[i] = [Xstart, Xend] 表示水平直径在 Xstart 和 Xend之间的气球。你不知道气球的确切 y 坐标。
+	// 一支弓箭可以沿着 x 轴从不同点 完全垂直 地射出。
+	// 在坐标 x 处射出一支箭，若有一个气球的直径的开始和结束坐标为 Xstart，Xend，且满足 Xstart ≤ X ≤ Xend，则该气球会被 引爆 。
+	// 可以射出的弓箭的数量 没有限制 。弓箭一旦被射出之后，可以无限地前进。
+	// 数组 points ,返回引爆所有气球所必须射出的 最小 弓箭数。
+	points := [][]int{{10, 16}, {2, 8}, {1, 6}, {7, 12}}
+	fmt.Println("findMinArrowShots:", findMinArrowShots(points)) // 2
 }
 
 // 交替合并字符串
@@ -675,4 +684,21 @@ func increasingTriplet(nums []int) bool {
 	}
 
 	return false
+}
+
+func findMinArrowShots(points [][]int) int {
+	sort.Slice(points, func(i, j int) bool {
+		return points[i][1] < points[j][1]
+	})
+
+	cnt := 1
+	end := points[0][1]
+	for _, p := range points {
+		if p[0] > end {
+			cnt++
+			end = p[1]
+		}
+	}
+
+	return cnt
 }
