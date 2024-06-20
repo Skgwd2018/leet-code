@@ -166,21 +166,21 @@ func main() {
 // 交替合并字符串
 func mergeAlternately(word1 string, word2 string) string {
 	len1, len2 := len(word1), len(word2)
-	result := make([]byte, 0, len1+len2) // 预分配空间
+	answer := make([]byte, 0, len1+len2) // 预分配空间
 	i, m := 0, min(len1, len2)
 	for i < m {
-		result = append(result, word1[i], word2[i])
+		answer = append(answer, word1[i], word2[i])
 		i++
 	}
 
 	if i < len1 {
-		result = append(result, word1[i:]...)
+		answer = append(answer, word1[i:]...)
 	}
 	if i < len2 {
-		result = append(result, word2[i:]...)
+		answer = append(answer, word2[i:]...)
 	}
 
-	return string(result)
+	return string(answer)
 }
 
 // 欧几里得算法即辗转相除法，指用于计算两个非负整数a，b的最大公约数。计算公式gcd(a,b) = gcd(b, a mod b)。
@@ -207,12 +207,12 @@ func gcdOfStrings(str1 string, str2 string) string {
 func kidsWithCandies(candies []int, extraCandies int) []bool {
 	// slice中取最大值
 	mc := slices.Max(candies) - extraCandies
-	result := make([]bool, len(candies))
+	answer := make([]bool, len(candies))
 	for i, c := range candies {
-		result[i] = c >= mc
+		answer[i] = c >= mc
 	}
 
-	return result
+	return answer
 }
 
 func canPlaceFlowers(flowerbed []int, n int) bool {
@@ -344,20 +344,20 @@ func findDifference(nums1 []int, nums2 []int) [][]int {
 	}
 
 	//var a1, a2 []int
-	result := make([][]int, 2)
+	answer := make([][]int, 2)
 	for k := range set1 {
 		if !set2[k] {
-			result[0] = append(result[0], k)
+			answer[0] = append(answer[0], k)
 		}
 	}
 	for k := range set2 {
 		if !set1[k] {
-			result[1] = append(result[1], k)
+			answer[1] = append(answer[1], k)
 		}
 	}
 
 	//return [][]int{a1, a2}
-	return result
+	return answer
 }
 
 func uniqueOccurrences(arr []int) bool {
@@ -402,10 +402,10 @@ func guessNumber(n int) int {
 	return n
 
 	// 解法二:闭包操作
-	/*result := 1 + sort.Search(n, func(i int) bool {
+	/*answer := 1 + sort.Search(n, func(i int) bool {
 		return guess(i+1) != 1
 	})
-	return result*/
+	return answer*/
 }
 
 // 使用动态规划避免重复计算
@@ -463,11 +463,11 @@ func countBits(n int) []int {
 	return dp*/
 
 	//解法二:使用内置函数
-	result := make([]int, n+1)
+	answer := make([]int, n+1)
 	for i := 0; i <= n; i++ {
-		result[i] = bits.OnesCount(uint(i))
+		answer[i] = bits.OnesCount(uint(i))
 	}
-	return result
+	return answer
 }
 
 // 题目：给你一个 非空 整数数组 nums,除了某个元素只出现一次以外,其余每个元素均出现两次。找出那个只出现了一次的元素。
@@ -490,8 +490,8 @@ func reverseWords(s string) string {
 		words[i], words[len(words)-1-i] = words[len(words)-1-i], words[i]
 	}
 	// 重新使用空格连接单词
-	result := strings.Join(words, " ")
-	return result
+	answer := strings.Join(words, " ")
+	return answer
 }
 
 func compress(chars []byte) int {
